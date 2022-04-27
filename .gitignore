@@ -4,3 +4,6 @@ app.log
 .classpath
 .project
 **.settings/**
+scripts/.DS_Store
+.DS_Store
+.DS_Store

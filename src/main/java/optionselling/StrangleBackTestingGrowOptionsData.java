@@ -52,7 +52,7 @@ public class StrangleBackTestingGrowOptionsData {
 			parseData(parentDir + file, filesList);
 		}
 
-		strikeMap.forEach((key, val) -> System.out.println(key));
+//		strikeMap.forEach((key, val) -> System.out.println(key));
 		entryStrikesStrategy();
 		stopLossBackTestStrategy();
 		profitCalculation();
