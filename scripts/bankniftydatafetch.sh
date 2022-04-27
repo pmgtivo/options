@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# added below crontab -e
+# */1 9-15 * * * cd /Users/pmg/sourcecode/options/scripts && ./niftydatafetch.sh
+# */1 9-15 * * * cd /Users/pmg/sourcecode/options/scripts && ./bankniftydatafetch.sh
+
+
 current_date=$(date "+%Y.%m.%d")
 current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 
