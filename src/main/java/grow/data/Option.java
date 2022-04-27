@@ -4,8 +4,6 @@ package grow.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ "open", "high", "low", "close", "ltp", "dayChange", "dayChangePerc", "lowPriceRange",
 		"highPriceRange", "volume", "totalBuyQty", "totalSellQty", "openInterest", "prevOpenInterest", "lastTradeQty",
 		"lastTradeTime", "growwContractId", "contractDisplayName", "longDisplayName" })
-@Generated("jsonschema2pojo")
 public class Option {
 
 	@JsonProperty("open")
