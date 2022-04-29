@@ -1,4 +1,4 @@
-package optionselling;
+package grow.data.backtest;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,17 +21,19 @@ import grow.data.Option;
 import grow.data.OptionChain;
 import grow.data.OptionChainData;
 
-public class StrangleBackTestingGrowOptionsData {
-	private static String fileFilterStr = "_niftybank.json";
-	private static double entryPoint = 20.0;
+public class NFStrangleBackTestingGrowOptionsData {
+	private static String fileFilterStr = "_nifty.json";
+	private static double entryPoint = 5.0;
+	private static double stopLossTimes = 2.5;
+	private static int lotSize = 50;
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static LinkedHashMap<String, OptionChainData> strikeMap = new LinkedHashMap<>();
 
 	private static HashMap<String, Double> stopLossMap = new HashMap<>();
 	private static HashMap<String, Double> stopLossHitMap = new HashMap<>();
 	private static HashMap<String, Double> entryMap = new HashMap<>();
-	final static Logger log = Logger.getLogger(ShortStraddleBacktesting.class);
-	private static String parentDir = "/Users/pmg/Documents/nseData/";
+	final static Logger log = Logger.getLogger(NFStrangleBackTestingGrowOptionsData.class);
+	private static String parentDir = "/Users/pmg/Documents/niftyData/";
 
 	public static void main(String[] args) {
 
@@ -50,12 +52,23 @@ public class StrangleBackTestingGrowOptionsData {
 			List<String> filesList = FetchOcFiles(parentDir + file);
 			Collections.sort(filesList);
 			parseData(parentDir + file, filesList);
+
+			entryStrikesStrategy();
+			stopLossBackTestStrategy();
+			profitCalculation();
+			clearAllData();
 		}
 
 //		strikeMap.forEach((key, val) -> System.out.println(key));
-		entryStrikesStrategy();
-		stopLossBackTestStrategy();
-		profitCalculation();
+
+	}
+
+	private static void clearAllData() {
+		strikeMap.clear();
+		stopLossHitMap.clear();
+		stopLossMap.clear();
+		entryMap.clear();
+
 	}
 
 	private static void profitCalculation() {
@@ -80,8 +93,10 @@ public class StrangleBackTestingGrowOptionsData {
 
 				if (optionChainOptional.isPresent()) {
 					OptionChain oc = optionChainOptional.get();
-					Option option = oc.getCallOption();
-					if (option == null) {
+					Option option = null;
+					if (oc.getCallOption().getGrowwContractId().equalsIgnoreCase(strikeKey)) {
+						option = oc.getCallOption();
+					} else {
 						option = oc.getPutOption();
 					}
 					Double soldAt = option.getLtp();
@@ -99,19 +114,17 @@ public class StrangleBackTestingGrowOptionsData {
 
 		log.info("");
 		log.info("Profit earned :: " + points);
-		log.info("Profit earned per Lot:: " + points * 25);
-		log.info("Profit earned for 4 Lot:: " + points * 100);
+		log.info("Profit earned per Lot:: " + points * lotSize);
+		log.info("Profit earned for 4 Lot:: " + points * lotSize * 4);
 		log.info("");
-		log.info("Total percentage calculation for 4L :: " + ((points * 100) / 400000) * 100);
+		log.info("Total percentage calculation for 4L :: " + ((points * lotSize * 4) / 400000) * 100);
 
 	}
 
 	private static void stopLossBackTestStrategy() {
 
 		for (String key : strikeMap.keySet()) {
-
 			for (String slKey : stopLossMap.keySet()) {
-
 				OptionChainData ocData = strikeMap.get(key);
 
 				// call option SL check
@@ -122,7 +135,7 @@ public class StrangleBackTestingGrowOptionsData {
 					Option op = callOcOptional.get().getCallOption();
 					Double ltp = op.getLtp();
 					Double stopLoss = stopLossMap.get(slKey);
-
+//					log.info("Stop loss calculate for option " + op + " strike: " + slKey);
 					if (stopLoss <= ltp) {
 						log.info("");
 						log.error("Stop loss Hit for Strike : " + op);
@@ -141,7 +154,7 @@ public class StrangleBackTestingGrowOptionsData {
 					Option op = putOcOptional.get().getPutOption();
 					Double ltp = op.getLtp();
 					Double stopLoss = stopLossMap.get(slKey);
-
+//					log.info("Stop loss calculate for option " + op + " strike: " + slKey);
 					if (stopLoss <= ltp) {
 						log.info("");
 						log.error("Stop loss Hit for Strike : " + op + "-> Trade Time:: " + key);
@@ -166,8 +179,8 @@ public class StrangleBackTestingGrowOptionsData {
 			Double entryPrice = entryMap.get(strike);
 			if (option.getLtp() < entryPrice) {
 				log.info("");
-				log.info("Stop loss calculated at 1:30 for strike: " + strike + " Stop loss: " + option.getLtp() * 2.5);
-				stopLossMap.put(strike, option.getLtp() * 2.5);
+				log.info("Stop loss calculated at 1:30 for strike: " + strike + " Stop loss: " + option.getLtp() * stopLossTimes);
+				stopLossMap.put(strike, option.getLtp() * stopLossTimes);
 			} else {
 				log.info("At 1:30 PM price was high than entry so not changing stop loss");
 			}
@@ -175,9 +188,9 @@ public class StrangleBackTestingGrowOptionsData {
 		} else if (time.equalsIgnoreCase("14:30")) {
 			Double entryPrice = entryMap.get(strike);
 			if (option.getLtp() < entryPrice) {
-				stopLossMap.put(strike, option.getLtp() * 2.5);
+				stopLossMap.put(strike, option.getLtp() * stopLossTimes);
 				log.info("");
-				log.info("Stop loss calculated at 2:30 for strike: " + strike + " Stop loss: " + option.getLtp() * 2.5);
+				log.info("Stop loss calculated at 2:30 for strike: " + strike + " Stop loss: " + option.getLtp() * stopLossTimes);
 			} else {
 				log.info("At 2:30 PM price was high than entry so not changing stop loss");
 			}
@@ -221,12 +234,12 @@ public class StrangleBackTestingGrowOptionsData {
 		entryMap.put(ceStrike.getGrowwContractId(), ceStrike.getLtp());
 		entryMap.put(peStrike.getGrowwContractId(), peStrike.getLtp());
 
-		stopLossMap.put(ceStrike.getGrowwContractId(), ceStrike.getLtp() * 2.5);
-		stopLossMap.put(peStrike.getGrowwContractId(), peStrike.getLtp() * 2.5);
+		stopLossMap.put(ceStrike.getGrowwContractId(), ceStrike.getLtp() * stopLossTimes);
+		stopLossMap.put(peStrike.getGrowwContractId(), peStrike.getLtp() * stopLossTimes);
 
 		log.info("Stop loss calculated as below");
-		log.info("CE Strike :: " + ceStrike.getLtp() * 2.5);
-		log.info("PE Strike :: " + peStrike.getLtp() * 2.5);
+		log.info("CE Strike :: " + ceStrike.getLtp() * stopLossTimes);
+		log.info("PE Strike :: " + peStrike.getLtp() * stopLossTimes);
 		log.info("");
 
 	}
