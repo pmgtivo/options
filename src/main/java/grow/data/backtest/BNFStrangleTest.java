@@ -21,19 +21,18 @@ import grow.data.Option;
 import grow.data.OptionChain;
 import grow.data.OptionChainData;
 
-public class NFStrangleBackTestingGrowOptionsData {
-	private static String fileFilterStr = "_nifty.json";
-	private static double entryPoint = 5.0;
+public class BNFStrangleTest {
+	private static String fileFilterStr = "_niftybank.json";
+	private static double entryPoint = 20.0;
 	private static double stopLossTimes = 2.5;
-	private static int lotSize = 50;
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static LinkedHashMap<String, OptionChainData> strikeMap = new LinkedHashMap<>();
 
 	private static HashMap<String, Double> stopLossMap = new HashMap<>();
 	private static HashMap<String, Double> stopLossHitMap = new HashMap<>();
 	private static HashMap<String, Double> entryMap = new HashMap<>();
-	final static Logger log = Logger.getLogger(NFStrangleBackTestingGrowOptionsData.class);
-	private static String parentDir = "/Users/pmg/Documents/niftyData/";
+	final static Logger log = Logger.getLogger(BNFStrangleTest.class);
+	private static String parentDir = "/Users/pmg/Documents/bankNiftyData/";
 
 	public static void main(String[] args) {
 
@@ -114,10 +113,10 @@ public class NFStrangleBackTestingGrowOptionsData {
 
 		log.info("");
 		log.info("Profit earned :: " + points);
-		log.info("Profit earned per Lot:: " + points * lotSize);
-		log.info("Profit earned for 4 Lot:: " + points * lotSize * 4);
+		log.info("Profit earned per Lot:: " + points * 25);
+		log.info("Profit earned for 4 Lot:: " + points * 100);
 		log.info("");
-		log.info("Total percentage calculation for 4L :: " + ((points * lotSize * 4) / 400000) * 100);
+		log.info("Total percentage calculation for 4L :: " + ((points * 100) / 400000) * 100);
 
 	}
 
