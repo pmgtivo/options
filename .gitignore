@@ -5,5 +5,5 @@ app.log
 .project
 **.settings/**
 scripts/.DS_Store
-.DS_Store
+**.DS_Store**
 .DS_Store

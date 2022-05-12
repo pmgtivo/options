@@ -25,6 +25,7 @@ public class BNFStrangleTest {
 	private static String fileFilterStr = "_niftybank.json";
 	private static double entryPoint = 20.0;
 	private static double stopLossTimes = 2.5;
+	private static double slippage = 2.0;
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static LinkedHashMap<String, OptionChainData> strikeMap = new LinkedHashMap<>();
 
@@ -42,7 +43,7 @@ public class BNFStrangleTest {
 		List<String> filterDir = Arrays.stream(contents)
 				.filter(name -> !name.endsWith(".sh") && !name.equalsIgnoreCase(".DS_Store"))
 				.collect(Collectors.toList());
-
+		Collections.sort(filterDir);
 		for (String file : filterDir) {
 			LocalDate currentDate = getDate(file);
 			log.info("");
@@ -73,7 +74,6 @@ public class BNFStrangleTest {
 	private static void profitCalculation() {
 		log.info("Profit booking calculation");
 		Double points = 0.0;
-		Double slippage = 2.0;
 
 		for (String strikeKey : entryMap.keySet()) {
 			if (stopLossHitMap.containsKey(strikeKey)) {
