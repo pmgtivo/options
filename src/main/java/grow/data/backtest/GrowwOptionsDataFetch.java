@@ -80,10 +80,10 @@ public class GrowwOptionsDataFetch {
 
 	}
 	
-	private static LocalDate getDate(String date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-		return LocalDate.parse(LocalDate.now(), formatter);
-
-	}
+//	private static LocalDate getDate(String date) {
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+//		return LocalDate.parse(LocalDate.now(), formatter);
+//
+//	}
 
 }

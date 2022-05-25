@@ -1,6 +1,8 @@
 package grow.data.backtest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +16,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,9 +39,23 @@ public class BNFStrangleTest {
 	private static HashMap<String, Double> entryMap = new HashMap<>();
 	final static Logger log = Logger.getLogger(BNFStrangleTest.class);
 	private static String parentDir = "/Users/pmg/Documents/bankNiftyData/";
+	
+	private static int rowNum = 0;
+	private static int col = 0;
+	private static XSSFWorkbook workbook = null;
+	private static XSSFSheet sheet = null;
+	private static Row row = null;
 
 	public static void main(String[] args) {
-
+		workbook = new XSSFWorkbook();
+		sheet = workbook.createSheet("Transactions");
+		row = sheet.createRow(rowNum++);
+		row.createCell(col++).setCellValue("DATE");
+		row.createCell(col++).setCellValue("DAY");
+		row.createCell(col++).setCellValue("PROFIT POINTS");
+		row.createCell(col++).setCellValue("PROFITS PER LOT");
+		row.createCell(col++).setCellValue("PROFITS FOR 4 LOTS");
+		
 		File directoryPath = new File(parentDir);
 		String contents[] = directoryPath.list();
 
@@ -52,15 +71,31 @@ public class BNFStrangleTest {
 			List<String> filesList = FetchOcFiles(parentDir + file);
 			Collections.sort(filesList);
 			parseData(parentDir + file, filesList);
+			col = 0;
+			row = sheet.createRow(rowNum++);
 
+			row.createCell(col++).setCellValue(currentDate.toString());
+			row.createCell(col++).setCellValue(currentDate.getDayOfWeek().name());
+			
 			entryStrikesStrategy();
 			stopLossBackTestStrategy();
 			profitCalculation();
 			clearAllData();
 		}
+		writeReportToFile();
 
-//		strikeMap.forEach((key, val) -> System.out.println(key));
+	}
 
+	private static void writeReportToFile() {
+		try {
+			FileOutputStream outputStream = new FileOutputStream("BNFStragleTestReport.xlsx");
+			workbook.write(outputStream);
+			workbook.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void clearAllData() {
@@ -117,6 +152,10 @@ public class BNFStrangleTest {
 		log.info("Profit earned for 4 Lot:: " + points * 100);
 		log.info("");
 		log.info("Total percentage calculation for 4L :: " + ((points * 100) / 400000) * 100);
+		
+		row.createCell(col++).setCellValue(points);
+		row.createCell(col++).setCellValue(points * 25);
+		row.createCell(col++).setCellValue(points * 100);
 
 	}
 
