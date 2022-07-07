@@ -1,115 +1,137 @@
 
 package com.grow.derivatives.model;
 
+import javax.annotation.Nullable;
+
 public class Company {
 
-    private String isin;
-    private String companyName;
-    private String searchId;
-    private String nseScriptCode;
-    private Boolean isBuyAllowed;
-    private Boolean isSellAllowed;
-    private String companyShortName;
-    private String companyStatus;
-    private String logoUrl;
-    private String equityType;
-    private Long nseMarketLot;
-    private AdditionalProperties additionalProperties;
+	private String isin;
+	private String companyName;
+	private String growwContractId;
+	private String searchId;
+	private String nseScriptCode;
+	private Boolean isBuyAllowed;
+	private Boolean isSellAllowed;
+	private String companyShortName;
+	private String companyStatus;
+	private String logoUrl;
+	private String equityType;
+	private Long nseMarketLot;
+	@Nullable
+	private String isNseTradable;
 
-    public String getIsin() {
-        return isin;
-    }
+	public String getGrowwContractId() {
+		return growwContractId;
+	}
 
-    public void setIsin(String isin) {
-        this.isin = isin;
-    }
+	public void setGrowwContractId(String growwContractId) {
+		this.growwContractId = growwContractId;
+	}
+	
+	public String getIsNseTradable() {
+		return isNseTradable;
+	}
 
-    public String getCompanyName() {
-        return companyName;
-    }
+	public void setIsNseTradable(String isNseTradable) {
+		this.isNseTradable = isNseTradable;
+	}
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+	private AdditionalProperties additionalProperties;
 
-    public String getSearchId() {
-        return searchId;
-    }
+	public String getIsin() {
+		return isin;
+	}
 
-    public void setSearchId(String searchId) {
-        this.searchId = searchId;
-    }
+	public void setIsin(String isin) {
+		this.isin = isin;
+	}
 
-    public String getNseScriptCode() {
-        return nseScriptCode;
-    }
+	public String getCompanyName() {
+		return companyName;
+	}
 
-    public void setNseScriptCode(String nseScriptCode) {
-        this.nseScriptCode = nseScriptCode;
-    }
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
 
-    public Boolean getIsBuyAllowed() {
-        return isBuyAllowed;
-    }
+	public String getSearchId() {
+		return searchId;
+	}
 
-    public void setIsBuyAllowed(Boolean isBuyAllowed) {
-        this.isBuyAllowed = isBuyAllowed;
-    }
+	public void setSearchId(String searchId) {
+		this.searchId = searchId;
+	}
 
-    public Boolean getIsSellAllowed() {
-        return isSellAllowed;
-    }
+	public String getNseScriptCode() {
+		return nseScriptCode;
+	}
 
-    public void setIsSellAllowed(Boolean isSellAllowed) {
-        this.isSellAllowed = isSellAllowed;
-    }
+	public void setNseScriptCode(String nseScriptCode) {
+		this.nseScriptCode = nseScriptCode;
+	}
 
-    public String getCompanyShortName() {
-        return companyShortName;
-    }
+	public Boolean getIsBuyAllowed() {
+		return isBuyAllowed;
+	}
 
-    public void setCompanyShortName(String companyShortName) {
-        this.companyShortName = companyShortName;
-    }
+	public void setIsBuyAllowed(Boolean isBuyAllowed) {
+		this.isBuyAllowed = isBuyAllowed;
+	}
 
-    public String getCompanyStatus() {
-        return companyStatus;
-    }
+	public Boolean getIsSellAllowed() {
+		return isSellAllowed;
+	}
 
-    public void setCompanyStatus(String companyStatus) {
-        this.companyStatus = companyStatus;
-    }
+	public void setIsSellAllowed(Boolean isSellAllowed) {
+		this.isSellAllowed = isSellAllowed;
+	}
 
-    public String getLogoUrl() {
-        return logoUrl;
-    }
+	public String getCompanyShortName() {
+		return companyShortName;
+	}
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
+	public void setCompanyShortName(String companyShortName) {
+		this.companyShortName = companyShortName;
+	}
 
-    public String getEquityType() {
-        return equityType;
-    }
+	public String getCompanyStatus() {
+		return companyStatus;
+	}
 
-    public void setEquityType(String equityType) {
-        this.equityType = equityType;
-    }
+	public void setCompanyStatus(String companyStatus) {
+		this.companyStatus = companyStatus;
+	}
 
-    public Long getNseMarketLot() {
-        return nseMarketLot;
-    }
+	public String getLogoUrl() {
+		return logoUrl;
+	}
 
-    public void setNseMarketLot(Long nseMarketLot) {
-        this.nseMarketLot = nseMarketLot;
-    }
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
 
-    public AdditionalProperties getAdditionalProperties() {
-        return additionalProperties;
-    }
+	public String getEquityType() {
+		return equityType;
+	}
 
-    public void setAdditionalProperties(AdditionalProperties additionalProperties) {
-        this.additionalProperties = additionalProperties;
-    }
+	public void setEquityType(String equityType) {
+		this.equityType = equityType;
+	}
+
+	public Long getNseMarketLot() {
+		return nseMarketLot;
+	}
+
+	public void setNseMarketLot(Long nseMarketLot) {
+		this.nseMarketLot = nseMarketLot;
+	}
+
+	public AdditionalProperties getAdditionalProperties() {
+		return additionalProperties;
+	}
+
+	public void setAdditionalProperties(AdditionalProperties additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
 
 }

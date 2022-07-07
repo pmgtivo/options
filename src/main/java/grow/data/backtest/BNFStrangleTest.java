@@ -30,7 +30,7 @@ public class BNFStrangleTest {
 	private static String fileFilterStr = "_niftybank.json";
 	private static double entryPoint = 20.0;
 	private static double stopLossTimes = 2.5;
-	private static double slippage = 2.0;
+	private static double slippage = 0.0;
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static LinkedHashMap<String, OptionChainData> strikeMap = new LinkedHashMap<>();
 
@@ -39,7 +39,7 @@ public class BNFStrangleTest {
 	private static HashMap<String, Double> entryMap = new HashMap<>();
 	final static Logger log = Logger.getLogger(BNFStrangleTest.class);
 	private static String parentDir = "/Users/pmg/Documents/bankNiftyData/";
-	
+
 	private static int rowNum = 0;
 	private static int col = 0;
 	private static XSSFWorkbook workbook = null;
@@ -55,7 +55,7 @@ public class BNFStrangleTest {
 		row.createCell(col++).setCellValue("PROFIT POINTS");
 		row.createCell(col++).setCellValue("PROFITS PER LOT");
 		row.createCell(col++).setCellValue("PROFITS FOR 4 LOTS");
-		
+
 		File directoryPath = new File(parentDir);
 		String contents[] = directoryPath.list();
 
@@ -63,25 +63,36 @@ public class BNFStrangleTest {
 				.filter(name -> !name.endsWith(".sh") && !name.equalsIgnoreCase(".DS_Store"))
 				.collect(Collectors.toList());
 		Collections.sort(filterDir);
-		for (String file : filterDir) {
-			LocalDate currentDate = getDate(file);
-			log.info("");
-			log.info("STARTED PROCESSING FOR THE DATE :: " + currentDate);
-			log.info("Day of week : " + currentDate.getDayOfWeek());
-			List<String> filesList = FetchOcFiles(parentDir + file);
-			Collections.sort(filesList);
-			parseData(parentDir + file, filesList);
-			col = 0;
-			row = sheet.createRow(rowNum++);
+		try {
+			for (String file : filterDir) {
+				LocalDate currentDate = getDate(file);
+				log.info("");
+				log.info("STARTED PROCESSING FOR THE DATE :: " + currentDate);
+				log.info("Day of week : " + currentDate.getDayOfWeek());
+				List<String> filesList = FetchOcFiles(parentDir + file);
+				Collections.sort(filesList);
+				parseData(parentDir + file, filesList);
+				col = 0;
+				row = sheet.createRow(rowNum++);
 
-			row.createCell(col++).setCellValue(currentDate.toString());
-			row.createCell(col++).setCellValue(currentDate.getDayOfWeek().name());
-			
-			entryStrikesStrategy();
-			stopLossBackTestStrategy();
-			profitCalculation();
+				row.createCell(col++).setCellValue(currentDate.toString());
+				row.createCell(col++).setCellValue(currentDate.getDayOfWeek().name());
+				try {
+					entryStrikesStrategy();
+					stopLossBackTestStrategy();
+					profitCalculation();
+					clearAllData();
+				} catch (Exception e) {
+					clearAllData();
+					e.printStackTrace();
+				}
+
+			}
+		} catch (Exception e) {
 			clearAllData();
+			e.printStackTrace();
 		}
+
 		writeReportToFile();
 
 	}
@@ -152,7 +163,7 @@ public class BNFStrangleTest {
 		log.info("Profit earned for 4 Lot:: " + points * 100);
 		log.info("");
 		log.info("Total percentage calculation for 4L :: " + ((points * 100) / 400000) * 100);
-		
+
 		row.createCell(col++).setCellValue(points);
 		row.createCell(col++).setCellValue(points * 25);
 		row.createCell(col++).setCellValue(points * 100);
@@ -167,7 +178,9 @@ public class BNFStrangleTest {
 
 				// call option SL check
 				Optional<OptionChain> callOcOptional = ocData.getOptionChains().stream()
-						.filter((oc) -> oc.getCallOption().getGrowwContractId().equals(slKey)).findFirst();
+						.filter((oc) -> oc.getCallOption() != null && oc.getCallOption().getGrowwContractId() != null
+								&& slKey.equals(oc.getCallOption().getGrowwContractId()))
+						.findFirst();
 
 				if (callOcOptional.isPresent()) {
 					Option op = callOcOptional.get().getCallOption();
@@ -217,7 +230,8 @@ public class BNFStrangleTest {
 			Double entryPrice = entryMap.get(strike);
 			if (option.getLtp() < entryPrice) {
 				log.info("");
-				log.info("Stop loss calculated at 1:30 for strike: " + strike + " Stop loss: " + option.getLtp() * stopLossTimes);
+				log.info("Stop loss calculated at 1:30 for strike: " + strike + " Stop loss: "
+						+ option.getLtp() * stopLossTimes);
 				stopLossMap.put(strike, option.getLtp() * stopLossTimes);
 			} else {
 				log.info("At 1:30 PM price was high than entry so not changing stop loss");
@@ -228,7 +242,8 @@ public class BNFStrangleTest {
 			if (option.getLtp() < entryPrice) {
 				stopLossMap.put(strike, option.getLtp() * stopLossTimes);
 				log.info("");
-				log.info("Stop loss calculated at 2:30 for strike: " + strike + " Stop loss: " + option.getLtp() * stopLossTimes);
+				log.info("Stop loss calculated at 2:30 for strike: " + strike + " Stop loss: "
+						+ option.getLtp() * stopLossTimes);
 			} else {
 				log.info("At 2:30 PM price was high than entry so not changing stop loss");
 			}

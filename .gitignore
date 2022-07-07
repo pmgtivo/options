@@ -7,3 +7,4 @@ app.log
 scripts/.DS_Store
 **.DS_Store**
 .DS_Store
+credentials.properties
