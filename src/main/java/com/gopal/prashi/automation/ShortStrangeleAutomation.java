@@ -51,9 +51,9 @@ public class ShortStrangeleAutomation {
 		log.info("Starting Option selling");
 
 		takeEntryController();
-		
+
 		boolean isLoggedIn = isLoggedIn();
-		log.info("LoggedIn :: "+ isLoggedIn);
+		log.info("LoggedIn :: " + isLoggedIn);
 
 //		monitorPositions();
 
@@ -455,8 +455,16 @@ public class ShortStrangeleAutomation {
 
 	private static HashSet<String> generateOptionsStrikes(String optionType) {
 		HashSet<String> result = new HashSet<>();
-		int initialPrice = bankNiftyPrice - 3000;
-		int maxPrice = bankNiftyPrice + 3000;
+		int initialPrice = Integer.MAX_VALUE;
+		int maxPrice = Integer.MIN_VALUE;
+
+		if ("CE".equals(optionType)) {
+			initialPrice = bankNiftyPrice;
+			maxPrice = bankNiftyPrice + 3000;
+		}else if("PE".equals(optionType)) {
+			initialPrice = bankNiftyPrice - 3000;
+			maxPrice = bankNiftyPrice;
+		}
 
 		while (initialPrice <= maxPrice) {
 			String strike = "BANKNIFTY" + year + month + expiryDate + initialPrice + optionType;
